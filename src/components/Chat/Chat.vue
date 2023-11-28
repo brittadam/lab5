@@ -8,42 +8,43 @@
         data: [],
     }); //je gebruikt reactive voor array en object
 
-    //function onMounted  
-    onMounted(async() => {
-       await fetchMessages();
-    });
+     // my own username
+     const myUsername = "Britt";
 
-    //function fetchMessages
-    const fetchMessages = async() => {
+    // Fetch all messages when the component is mounted
+    onMounted(async () => {
         const response = await fetch("https://lab5-p379.onrender.com/api/v1/messages/");
         const data = await response.json();
         allMessages.data = data;
-    }
+    }); 
 
-
-    //function sendMessage
+    //function SendMessage
     const SendMessage = async () => {
-        const response = fetch("https://lab5-p379.onrender.com/api/v1/messages/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                value: message.value,
-            }),
-        });
+        const newMessage ={
+            user: myUsername,
+            text: message.value,
+        }
+    const response = await fetch("https://lab5-p379.onrender.com/api/v1/messages/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newMessage),
+    });
 
-        const newMessage = await response.json();
-        allMessages.data.push(newMessage); // Add the new message to the end
-        message.value = ""; // Clear the input
-    };
+    //console.log('Response:', response);
+     //console.log('New Message:', newMessage);
+
+    allMessages.data.push(newMessage);// Add the new message to the array
+    message.value = ""; // Clear the input
+};
 
 </script>
 
 <template>
     <div>
         <ul>
-            <li v-for="m in allMessages.data" :key="m.id">{{ m.text }}</li> 
+            <li v-for="m in allMessages.data" :key="m.id">{{ m.user}}: {{ m.text }}</li> 
         </ul>
         <div>
             <input v-model="message" type="text" placeholder="">
@@ -51,6 +52,7 @@
         </div>
     </div>
 </template>
+
 
 <style scoped>
 
